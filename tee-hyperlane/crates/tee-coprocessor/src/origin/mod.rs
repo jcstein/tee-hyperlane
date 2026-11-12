@@ -14,7 +14,8 @@ use tee_node::state::IsmState;
     feature = "ethereum",
     feature = "base",
     feature = "arbitrum",
-    feature = "eden"
+    feature = "eden",
+    feature = "besu"
 ))]
 pub mod evm;
 /// Chains with their own consensus, verified by a light client.

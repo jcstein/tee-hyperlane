@@ -9,7 +9,8 @@ use std::time::Duration;
     feature = "ethereum",
     feature = "base",
     feature = "arbitrum",
-    feature = "eden"
+    feature = "eden",
+    feature = "besu"
 ))]
 use alloy_primitives::Address;
 use alloy_primitives::{keccak256, U256};
@@ -19,7 +20,8 @@ use serde::{Deserialize, Serialize};
     feature = "ethereum",
     feature = "base",
     feature = "arbitrum",
-    feature = "eden"
+    feature = "eden",
+    feature = "besu"
 ))]
 use serde_json::json;
 use tracing::{debug, info, warn};
@@ -30,7 +32,8 @@ use crate::destination::Destination;
     feature = "ethereum",
     feature = "base",
     feature = "arbitrum",
-    feature = "eden"
+    feature = "eden",
+    feature = "besu"
 ))]
 use crate::origin::evm;
 #[cfg(feature = "celestia")]
@@ -42,7 +45,8 @@ use crate::route::{now, Delivered, Parked};
     feature = "ethereum",
     feature = "base",
     feature = "arbitrum",
-    feature = "eden"
+    feature = "eden",
+    feature = "besu"
 ))]
 const MAX_SPAN_EVM: u64 = 100_000;
 #[cfg(any(feature = "celestia", feature = "voyager"))]
@@ -102,6 +106,8 @@ pub fn expected_latency(kind: &str) -> u64 {
         "arbitrum" | "base" => 15 * 60,
         // Headers are signed every second at most, and the relayer attests on its next tick.
         "voyager" => 5 * 60,
+        // QBFT seals a final block every couple of seconds; one attestation.
+        "besu" => 5 * 60,
         _ => 60 * 60,
     }
 }
@@ -115,6 +121,7 @@ pub fn waiting_on(kind: &str) -> &'static str {
         "arbitrum" => "the next block Arbitrum's sequencer signs on its feed",
         "base" => "the next block Base's sequencer signs on p2p",
         "voyager" => "the next header voyager's sequencer signs",
+        "besu" => "the next block Besu's validators seal",
         _ => "the origin to finalize",
     }
 }
@@ -220,7 +227,8 @@ enum Scanner {
         feature = "ethereum",
         feature = "base",
         feature = "arbitrum",
-        feature = "eden"
+        feature = "eden",
+        feature = "besu"
     ))]
     Evm { rpc: evm::Rpc, mailbox: Address },
     #[cfg(feature = "celestia")]
@@ -267,9 +275,10 @@ impl Watcher {
                 feature = "ethereum",
                 feature = "base",
                 feature = "arbitrum",
-                feature = "eden"
+                feature = "eden",
+                feature = "besu"
             ))]
-            "ethereum" | "base" | "arbitrum" | "eden" => {
+            "ethereum" | "base" | "arbitrum" | "eden" | "besu" => {
                 let rpc = text("rpc").context("rpc")?;
                 Scanner::Evm {
                     rpc: evm::Rpc::new(&rpc, text("logs_rpc").as_deref()),
@@ -291,7 +300,8 @@ impl Watcher {
                 feature = "ethereum",
                 feature = "base",
                 feature = "arbitrum",
-                feature = "eden"
+                feature = "eden",
+                feature = "besu"
             ))]
             Scanner::Evm { rpc, .. } => {
                 evm::quantity(&rpc.read("eth_blockNumber", json!([])).await?)?
@@ -310,7 +320,8 @@ impl Watcher {
                 feature = "ethereum",
                 feature = "base",
                 feature = "arbitrum",
-                feature = "eden"
+                feature = "eden",
+                feature = "besu"
             ))]
             Scanner::Evm { .. } => MAX_SPAN_EVM,
             #[cfg(feature = "celestia")]
@@ -328,6 +339,7 @@ impl Watcher {
             feature = "base",
             feature = "arbitrum",
             feature = "eden",
+            feature = "besu",
             feature = "celestia"
         ))]
         let mut times: BTreeMap<u64, u64> = BTreeMap::new();
@@ -337,7 +349,8 @@ impl Watcher {
                 feature = "ethereum",
                 feature = "base",
                 feature = "arbitrum",
-                feature = "eden"
+                feature = "eden",
+                feature = "besu"
             ))]
             Scanner::Evm { rpc, mailbox } => {
                 for (log, message) in rpc.dispatches_to(*mailbox, recipients, from, to).await? {

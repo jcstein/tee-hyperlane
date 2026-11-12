@@ -6,8 +6,8 @@ pub mod arbitrum;
 pub mod base;
 #[cfg(feature = "eden")]
 pub mod eden;
-/// What Base and Arbitrum share.
-#[cfg(any(feature = "base", feature = "arbitrum"))]
+/// What Base, Arbitrum and Besu share.
+#[cfg(any(feature = "base", feature = "arbitrum", feature = "besu"))]
 pub mod sequenced;
 #[cfg(feature = "voyager")]
 pub mod voyager;

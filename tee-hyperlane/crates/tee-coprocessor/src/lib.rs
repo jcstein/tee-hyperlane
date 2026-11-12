@@ -7,7 +7,8 @@
     feature = "base",
     feature = "arbitrum",
     feature = "eden",
-    feature = "voyager"
+    feature = "voyager",
+    feature = "besu"
 )))]
 compile_error!(
     "tee-coprocessor needs at least one chain feature; see [features] in its Cargo.toml"

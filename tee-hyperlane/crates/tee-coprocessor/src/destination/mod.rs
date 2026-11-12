@@ -5,7 +5,8 @@
     feature = "ethereum",
     feature = "base",
     feature = "arbitrum",
-    feature = "eden"
+    feature = "eden",
+    feature = "besu"
 ))]
 use anyhow::Context;
 use anyhow::Result;
@@ -16,7 +17,8 @@ use tee_node::state::IsmState;
     feature = "ethereum",
     feature = "base",
     feature = "arbitrum",
-    feature = "eden"
+    feature = "eden",
+    feature = "besu"
 ))]
 use tokio::process::Command;
 
@@ -145,7 +147,8 @@ impl Batch {
     feature = "ethereum",
     feature = "base",
     feature = "arbitrum",
-    feature = "eden"
+    feature = "eden",
+    feature = "besu"
 ))]
 const TOOL_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(300);
 
@@ -155,7 +158,8 @@ const TOOL_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(300);
     feature = "ethereum",
     feature = "base",
     feature = "arbitrum",
-    feature = "eden"
+    feature = "eden",
+    feature = "besu"
 ))]
 async fn run(program: &str, args: &[&str]) -> Result<String> {
     run_for(program, args, TOOL_TIMEOUT).await
@@ -166,7 +170,8 @@ async fn run(program: &str, args: &[&str]) -> Result<String> {
     feature = "ethereum",
     feature = "base",
     feature = "arbitrum",
-    feature = "eden"
+    feature = "eden",
+    feature = "besu"
 ))]
 async fn run_for(program: &str, args: &[&str], limit: std::time::Duration) -> Result<String> {
     let child = Command::new(program).args(args).kill_on_drop(true).output();
@@ -197,7 +202,8 @@ async fn run_for(program: &str, args: &[&str], limit: std::time::Duration) -> Re
         feature = "ethereum",
         feature = "base",
         feature = "arbitrum",
-        feature = "eden"
+        feature = "eden",
+        feature = "besu"
     )
 ))]
 mod tests {
@@ -220,7 +226,8 @@ mod celestia;
     feature = "ethereum",
     feature = "base",
     feature = "arbitrum",
-    feature = "eden"
+    feature = "eden",
+    feature = "besu"
 ))]
 mod evm;
 #[cfg(feature = "voyager")]
@@ -232,7 +239,8 @@ pub use celestia::Celestia;
     feature = "ethereum",
     feature = "base",
     feature = "arbitrum",
-    feature = "eden"
+    feature = "eden",
+    feature = "besu"
 ))]
 pub use evm::Evm;
 #[cfg(feature = "voyager")]

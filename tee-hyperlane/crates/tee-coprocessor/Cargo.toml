@@ -10,7 +10,7 @@ license.workspace = true
 # passes `--no-default-features` and names the chains it serves. The relay loop, API and
 # monitor are always in; a chain kind the build left out is refused when the config is read.
 [features]
-default = ["celestia", "ethereum", "base", "arbitrum", "eden", "voyager"]
+default = ["celestia", "ethereum", "base", "arbitrum", "eden", "voyager", "besu"]
 celestia = ["tee-node/celestia", "dep:tendermint", "dep:tendermint-rpc", "dep:tendermint-light-client-verifier"]
 ethereum = ["tee-node/ethereum", "dep:alloy-consensus", "dep:alloy-rlp", "dep:helios-consensus-core", "dep:tree_hash"]
 base = ["tee-node/base", "dep:alloy-consensus", "dep:alloy-rlp", "dep:libp2p", "dep:discv5", "dep:enr", "dep:snap"]
@@ -19,6 +19,8 @@ arbitrum = ["tee-node/arbitrum", "dep:alloy-consensus", "dep:alloy-rlp", "dep:to
 eden = ["tee-node/eden", "celestia", "dep:alloy-consensus", "dep:alloy-rlp", "dep:celestia-types"]
 # Both local voyager chains, as tee-node serves the pair from one image.
 voyager = ["tee-node/voyager"]
+# A private Besu chain under QBFT, read over JSON-RPC like the other EVM chains.
+besu = ["tee-node/besu", "dep:alloy-consensus", "dep:alloy-rlp"]
 
 [dependencies]
 hyperlane-types.workspace = true

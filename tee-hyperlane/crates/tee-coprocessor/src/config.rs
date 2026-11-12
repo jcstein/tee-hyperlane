@@ -8,6 +8,8 @@ use serde::de::DeserializeOwned;
 use serde::Deserialize;
 
 use crate::destination::{self, Destination};
+#[cfg(feature = "besu")]
+use crate::origin::l1::besu;
 #[cfg(feature = "celestia")]
 use crate::origin::l1::celestia;
 #[cfg(feature = "ethereum")]
@@ -166,6 +168,8 @@ impl Config {
             }
             #[cfg(feature = "voyager")]
             "voyager" => Box::new(voyager::Voyager::new(self.chain(name)?)?),
+            #[cfg(feature = "besu")]
+            "besu" => Box::new(besu::Besu::new(self.chain(name)?)?),
             other => return Err(unsupported(name, other)),
         })
     }
@@ -191,9 +195,10 @@ impl Config {
                 feature = "ethereum",
                 feature = "base",
                 feature = "arbitrum",
-                feature = "eden"
+                feature = "eden",
+                feature = "besu"
             ))]
-            "celestia" | "ethereum" | "base" | "arbitrum" | "eden" => {
+            "celestia" | "ethereum" | "base" | "arbitrum" | "eden" | "besu" => {
                 self.mailbox_destination(name, ism)
             }
             other => Err(unsupported(name, other)),
@@ -206,7 +211,8 @@ impl Config {
         feature = "ethereum",
         feature = "base",
         feature = "arbitrum",
-        feature = "eden"
+        feature = "eden",
+        feature = "besu"
     ))]
     fn mailbox_destination(&self, name: &str, ism: &str) -> Result<Box<dyn Destination>> {
         #[derive(Deserialize)]
@@ -217,7 +223,8 @@ impl Config {
                 feature = "ethereum",
                 feature = "base",
                 feature = "arbitrum",
-                feature = "eden"
+                feature = "eden",
+                feature = "besu"
             ))]
             send_rpc: Option<String>,
             mailbox: Option<String>,
@@ -257,9 +264,10 @@ impl Config {
                 feature = "ethereum",
                 feature = "base",
                 feature = "arbitrum",
-                feature = "eden"
+                feature = "eden",
+                feature = "besu"
             ))]
-            "ethereum" | "base" | "arbitrum" | "eden" => Box::new(destination::Evm {
+            "ethereum" | "base" | "arbitrum" | "eden" | "besu" => Box::new(destination::Evm {
                 rpc: endpoint.send_rpc.unwrap_or(endpoint.rpc),
                 mailbox,
                 domain: endpoint.domain,
@@ -272,7 +280,7 @@ impl Config {
 
 /// Every chain kind the relayer knows, whether or not this build includes it.
 pub const KINDS: &[&str] = &[
-    "celestia", "ethereum", "base", "arbitrum", "eden", "voyager",
+    "celestia", "ethereum", "base", "arbitrum", "eden", "voyager", "besu",
 ];
 
 /// Why chain `name` of kind `kind` cannot be served: the kind is not one the relayer knows, or
