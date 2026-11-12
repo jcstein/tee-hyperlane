@@ -80,6 +80,8 @@ pub fn chains() -> Vec<&'static Chain> {
     all.push(&crate::chains::l2::base::BASE);
     #[cfg(feature = "eden")]
     all.push(&crate::chains::l2::eden::EDEN);
+    #[cfg(feature = "besu")]
+    all.push(&crate::chains::l1::besu::BESU);
     #[cfg(feature = "voyager")]
     all.push(&crate::chains::l2::voyager::VOYAGER_A);
     #[cfg(feature = "voyager")]
