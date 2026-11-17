@@ -293,6 +293,26 @@ mod tests {
         assert!(verify_block(&changed, &VALIDATORS).is_err());
     }
 
+    /// Block 5 of the same devnet with Prague and Osaka active from genesis (the return leg's
+    /// P-256 precompile): the header gains `requestsHash`, and still verifies.
+    #[test]
+    fn an_osaka_block_verifies_too() {
+        let path = concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/testdata/besu_qbft_block_osaka.json"
+        );
+        let block: Value = serde_json::from_str(&std::fs::read_to_string(path).unwrap()).unwrap();
+        assert!(block["requestsHash"].is_string());
+        let rlp = hex::decode(block["rawHeader"].as_str().unwrap()).unwrap();
+        let sealed = verify_block(&rlp, &VALIDATORS).unwrap();
+        assert_eq!(
+            sealed.hash,
+            block["hash"].as_str().unwrap().parse::<B256>().unwrap()
+        );
+        assert_eq!(sealed.number, 5);
+        assert_eq!(onchain_hash(&rlp).unwrap(), sealed.hash);
+    }
+
     #[test]
     fn quorum_is_two_thirds_rounded_up() {
         assert_eq!(quorum(1), 1);
